@@ -18,18 +18,16 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, from) => {
   const token = localStorage.getItem('token');
   const user = JSON.parse(localStorage.getItem('user') || 'null');
 
   if (to.meta.requiresAuth && !token) {
-    next('/login');
+    return '/login';
   } else if (to.meta.guest && token) {
-    next(user?.role === 'employer' ? '/employer' : '/employee');
+    return user?.role === 'employer' ? '/employer' : '/employee';
   } else if (to.meta.role && user?.role !== to.meta.role) {
-    next(user?.role === 'employer' ? '/employer' : '/employee');
-  } else {
-    next();
+    return user?.role === 'employer' ? '/employer' : '/employee';
   }
 });
 
